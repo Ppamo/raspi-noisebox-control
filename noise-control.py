@@ -1,16 +1,15 @@
 import time
 import signal
+import json
 import subprocess
 import rtmidi_python as rtmidi
 
-map = {
-	'LPD8': ['/opt/noisebox/noisebox','1'],
-	'nanoKEY2': ['/usr/bin/python','/opt/samplerbox/samplerbox.py', '1', '/opt/debian/opt/samplerbox/samples']
-}
 midi_in = [rtmidi.MidiIn()]
 attached = set()
 attached.add(midi_in[0].ports[0])
 p = None
+with open('noise-control.json') as map_file:
+	map = json.load(map_file)
 
 def exec_cmd(device):
 	global p

@@ -1,9 +1,11 @@
-BLINKING_RATE_READY = 2
-BLINKING_RATE_WAITING = 0.25
-BLINKING_RATE_LOADING = 0.5
+BLINKING_RATE_READY = 1.7
+BLINKING_RATE_WAITING = 0.3
+BLINKING_RATE_LOADING = 0.6
+PIN_OUT=24
 
-import os,time,signal,subprocess,json
+import os,sys,time,signal,subprocess,json
 import rtmidi_python as rtmidi
+import RPi.GPIO as GPIO
 
 midi_in = [rtmidi.MidiIn()]
 attached = set()
@@ -13,13 +15,12 @@ p = None
 with open('noise-control.json') as map_file:
 	map = json.load(map_file)
 
+GPIO.setwarnings(False)
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(PIN_OUT, GPIO.OUT)
+
 def set_led_status(status):
-	if status:
-		log('led ON')
-		pass
-	else:
-		log('led OFF')
-		pass
+	GPIO.output(PIN_OUT, status)
 	return not status
 
 def log(message):
@@ -33,9 +34,12 @@ def signal_handler(signum, frame):
 	if signum == signal.SIGUSR1:
 		log ('Child ready')
 		blinking_rate = BLINKING_RATE_READY
-	else:
+	elif signum == signal.SIGUSR2:
 		log ('Child busy')
 		blinking_rate = BLINKING_RATE_WAITING
+	elif signum == signal.SIGINT or signum == signal.SIGQUIT:
+		set_led_status(False)
+		sys.exit(0)
 
 def exec_cmd(device):
 	global p
@@ -74,6 +78,8 @@ blinking = False
 
 signal.signal(signal.SIGUSR1, signal_handler) 
 signal.signal(signal.SIGUSR2, signal_handler) 
+signal.signal(signal.SIGINT, signal_handler)
+signal.signal(signal.SIGQUIT, signal_handler)
 
 while True:
 	# if something has changed in midi ports

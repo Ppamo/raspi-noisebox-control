@@ -1,4 +1,4 @@
 {
-  "LPD8": ["/opt/noisebox/noisebox", "1", "slave"],
-  "nanoKEY2": ["/usr/bin/python", "/opt/samplerbox/samplerbox.py", "1", "/opt/debian/opt/samplerbox/samples", "slave"]
+  "LPD8": ["/opt/noisebox/noisebox", "2", "slave"],
+  "nanoKEY2": ["/usr/bin/python", "/opt/samplerbox/samplerbox.py", "2", "/opt/samplerbox/samples", "slave"]
 }

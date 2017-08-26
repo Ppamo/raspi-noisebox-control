@@ -1,7 +1,8 @@
 BLINKING_RATE_READY = 1.7
 BLINKING_RATE_WAITING = 0.3
 BLINKING_RATE_LOADING = 0.6
-PIN_OUT=24
+PIN_BLUE=23
+PIN_RED=24
 
 import os,sys,time,signal,subprocess,json
 import rtmidi_python as rtmidi
@@ -17,10 +18,12 @@ with open('noise-control.json') as map_file:
 
 GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BCM)
-GPIO.setup(PIN_OUT, GPIO.OUT)
+GPIO.setup(PIN_RED, GPIO.OUT)
+GPIO.setup(PIN_BLUE, GPIO.OUT)
 
 def set_led_status(status):
-	GPIO.output(PIN_OUT, status)
+	GPIO.output(PIN_RED, status)
+	GPIO.output(PIN_BLUE, not status)
 	return not status
 
 def log(message):
@@ -35,7 +38,8 @@ def signal_handler(signum, frame):
 		log ('Child busy')
 		blinking_rate = BLINKING_RATE_WAITING
 	elif signum == signal.SIGINT or signum == signal.SIGQUIT:
-		set_led_status(False)
+		log ('good bye!')
+		GPIO.cleanup()
 		sys.exit(0)
 
 def exec_cmd(device):

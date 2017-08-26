@@ -24,10 +24,7 @@ def set_led_status(status):
 	return not status
 
 def log(message):
-	with open('/tmp/testeeste.log', 'a') as f:
-		f.write(message)
-		f.write('\n')
-		f.close()
+	print message
 		
 def signal_handler(signum, frame):
 	global blinking_rate
@@ -49,7 +46,7 @@ def exec_cmd(device):
 
 def kill_cmd(device):
 	global p
-	print 'killing something'
+	log('killing something')
 	if not p is None and p.poll() is None:
 		p.send_signal(signal.SIGINT)
 		time.sleep(0.1)
@@ -57,14 +54,14 @@ def kill_cmd(device):
 			p.terminate()
 
 def attach_device(port):
-	print 'attaching ' + port
+	log('attaching ' + port)
 	global blinking_rate
 	blinking_rate = BLINKING_RATE_LOADING
 	attached.add(port)
 	exec_cmd(port)
 
 def dettach_device(port):
-	print 'dettaching ' + port
+	log('dettaching ' + port)
 	global blinking_rate
 	blinking_rate = BLINKING_RATE_LOADING
 	log('loading')

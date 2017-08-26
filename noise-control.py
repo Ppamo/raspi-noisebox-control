@@ -1,6 +1,7 @@
 BLINKING_RATE_READY = 1.7
 BLINKING_RATE_WAITING = 0.3
 BLINKING_RATE_LOADING = 0.6
+PIN_BUTTON=3
 PIN_BLUE=23
 PIN_RED=24
 
@@ -16,10 +17,18 @@ p = None
 with open('noise-control.json') as map_file:
 	map = json.load(map_file)
 
+def button_callback(channel):
+	kill_cmd(None)
+	GPIO.cleanup()
+	log ('shutdown now!')
+	os.system("shutdown now -h")
+
 GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(PIN_RED, GPIO.OUT)
 GPIO.setup(PIN_BLUE, GPIO.OUT)
+GPIO.setup(PIN_BUTTON, GPIO.IN, GPIO.PUD_UP)
+GPIO.add_event_detect(PIN_BUTTON, GPIO.FALLING, callback=button_callback,bouncetime=500)
 
 def set_led_status(status):
 	GPIO.output(PIN_RED, status)

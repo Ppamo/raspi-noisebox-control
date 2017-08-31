@@ -1,6 +1,6 @@
 BLINKING_RATE_READY = 1.7
-BLINKING_RATE_WAITING = 0.3
-BLINKING_RATE_LOADING = 0.6
+BLINKING_RATE_WAITING = 0.2
+BLINKING_RATE_LOADING = 0.5
 PIN_BUTTON=3
 PIN_BLUE=23
 PIN_RED=24
@@ -20,7 +20,7 @@ with open('noise-control.json') as map_file:
 def button_callback(channel):
 	kill_cmd(None)
 	GPIO.cleanup()
-	log ('shutdown now!')
+	log('shutdown now!')
 	os.system("shutdown now -h")
 
 GPIO.setwarnings(False)
@@ -59,12 +59,10 @@ def exec_cmd(device):
 
 def kill_cmd(device):
 	global p
-	log('killing something')
+	log('killing %d' % p.pid)
 	if not p is None and p.poll() is None:
 		p.send_signal(signal.SIGINT)
-		time.sleep(0.1)
-		if p.poll() is None:
-			p.terminate()
+		time.sleep(0.5)
 
 def attach_device(port):
 	log('attaching ' + port)
